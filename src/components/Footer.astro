@@ -1,0 +1,72 @@
+---
+import { socials } from '../data/site';
+import SocialIcon from './SocialIcon.astro';
+const links = socials.filter((s) => s.href);
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <p class="foot__sign">
+      Made with <span class="foot__heart" aria-hidden="true">♥</span> © {year}
+    </p>
+    {
+      links.length > 0 && (
+        <ul class="foot__links">
+          {links.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                class="foot__icon"
+                aria-label={l.label}
+                title={l.label}
+                rel={l.href.startsWith('http') ? 'me noopener' : undefined}
+              >
+                <SocialIcon name={l.icon} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</footer>
+
+<style>
+  .foot {
+    margin-top: clamp(4rem, 10vw, 8rem);
+    border-top: 1px solid var(--line);
+    background: rgba(243, 233, 218, 0.5);
+  }
+  .foot__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: clamp(1.75rem, 4vw, 2.75rem);
+    color: var(--espresso-soft);
+    font-size: var(--step--1);
+  }
+  .foot__heart { color: var(--terracotta); }
+  .foot__links {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+  }
+  .foot__icon {
+    display: grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    color: var(--espresso-soft);
+    background: transparent;
+    transition: color 0.3s var(--ease), background-color 0.3s var(--ease), transform 0.3s var(--ease);
+  }
+  .foot__icon:hover {
+    color: #fff;
+    background: var(--terracotta);
+    transform: translateY(-2px);
+  }
+</style>

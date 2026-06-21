@@ -1,0 +1,152 @@
+---
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/now', label: 'Now' },
+  { href: '/uses', label: 'Uses' },
+];
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<nav id="nav-container" class="nav-container" aria-label="Primary">
+  <div class="nav-row">
+    <!-- Left pill: logo -->
+    <a href="/" class="glass-pill nav-logo" aria-label="Aayushy Swetapragyan, home">
+      <span class="nav-logo__name">Aayushy</span>
+    </a>
+
+    <!-- Right pill: links -->
+    <div class="glass-pill nav-pill">
+      <ul class="nav-links">
+        {
+          links.map((l) => {
+            const here = l.href === path;
+            return (
+              <li>
+                <a href={l.href} aria-current={here ? 'page' : undefined} class:list={['nav-link', { 'is-active': here }]}>
+                  {l.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* ---- Floating container ---- */
+  .nav-container {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    padding: clamp(0.75rem, 2vw, 1rem);
+    pointer-events: none; /* let clicks pass except on the pills */
+  }
+  .nav-row {
+    width: 100%;
+    max-width: var(--maxw);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  /* ---- Progressive blur behind the bar ----
+     A masked backdrop-filter layer: max blur at the top, fading to clear at
+     the bottom, with soft horizontal edges so it never looks like a box. */
+  .nav-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 1.5rem);
+    max-width: var(--maxw);
+    height: 120%;
+    z-index: -1;
+    pointer-events: none;
+
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    border-radius: 0 0 2rem 2rem;
+
+    -webkit-mask-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 55%, rgba(0, 0, 0, 0) 100%),
+      linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 7%, rgba(0, 0, 0, 1) 93%, rgba(0, 0, 0, 0) 100%);
+    mask-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 55%, rgba(0, 0, 0, 0) 100%),
+      linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 7%, rgba(0, 0, 0, 1) 93%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* ---- Frosted glass pills ---- */
+  .glass-pill {
+    pointer-events: auto;
+    background: rgba(255, 250, 243, 0.55);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0 1px 2px rgba(58, 51, 48, 0.04),
+      0 8px 24px -10px rgba(120, 78, 50, 0.22);
+    border-radius: 999px;
+  }
+
+  /* logo pill */
+  .nav-logo {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 1.1rem;
+    color: var(--espresso);
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  }
+  .nav-logo:hover { transform: translateY(-1px); }
+  .nav-logo__name {
+    font-family: var(--font-cursive);
+    font-size: 1.6rem;
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--terracotta-deep);
+    padding-bottom: 0.08em;
+  }
+
+  /* links pill */
+  .nav-pill { padding: 0.3rem; }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    list-style: none;
+  }
+  .nav-link {
+    display: block;
+    padding: 0.4em 0.95em;
+    border-radius: 999px;
+    color: var(--espresso-soft);
+    font-size: var(--step--1);
+    font-weight: 540;
+    letter-spacing: 0.01em;
+    transition: color 0.3s var(--ease), background-color 0.3s var(--ease);
+  }
+  .nav-link:hover { color: var(--espresso); background: rgba(58, 51, 48, 0.05); }
+  .nav-link.is-active {
+    color: var(--terracotta-deep);
+    background: rgba(194, 107, 75, 0.12);
+  }
+
+  @media (max-width: 460px) {
+    .nav-logo { padding: 0.35rem 0.9rem; }
+    .nav-logo__name { font-size: 1.45rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-container::before {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+</style>

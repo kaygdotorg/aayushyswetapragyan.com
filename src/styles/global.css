@@ -1,0 +1,198 @@
+/* ============================================================
+   Aayushy Swetapragya — design system
+   Warm & organic · cream + terracotta · Fraunces / Inter
+   ============================================================ */
+
+/* Headings: Cormorant Garamond (elegant high-contrast serif) */
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource/cormorant-garamond/400-italic.css';
+@import '@fontsource/cormorant-garamond/500-italic.css';
+@import '@fontsource/cormorant-garamond/600-italic.css';
+/* Body: Hanken Grotesk (warm, readable grotesque) */
+@import '@fontsource-variable/hanken-grotesk';
+/* Accent: Sacramento (signature-style cursive, used for the nav wordmark) */
+@import '@fontsource/sacramento';
+
+:root {
+  /* palette — warm & creamy */
+  --cream: #fcf2df;        /* page background */
+  --cream-deep: #f4e6cd;   /* sunken / alt sections */
+  --card: #fff9ea;         /* raised cards */
+  --espresso: #3c322a;     /* primary text */
+  --espresso-soft: #6f6053;/* secondary text */
+  --terracotta: #c4683f;   /* primary accent */
+  --terracotta-deep: #a44a26;
+  --sage: #8f9a78;         /* secondary accent */
+  --sand: #edcd9b;         /* warm highlight */
+  --line: #eeddc2;         /* hairlines */
+
+  /* — type — */
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Hanken Grotesk Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-cursive: 'Sacramento', 'Brush Script MT', cursive;
+
+  /* fluid type scale */
+  --step--1: clamp(0.83rem, 0.78rem + 0.22vw, 0.95rem);
+  --step-0:  clamp(1rem, 0.94rem + 0.3vw, 1.18rem);
+  --step-1:  clamp(1.25rem, 1.13rem + 0.6vw, 1.6rem);
+  --step-2:  clamp(1.6rem, 1.35rem + 1.2vw, 2.4rem);
+  --step-3:  clamp(2.2rem, 1.7rem + 2.4vw, 3.8rem);
+  --step-4:  clamp(2.9rem, 2rem + 4.4vw, 5.8rem);
+
+  /* — space & shape — */
+  --radius: 18px;
+  --radius-lg: 30px;
+  --shadow: 0 1px 2px rgba(58, 51, 48, 0.04),
+            0 10px 30px -12px rgba(120, 78, 50, 0.18);
+  --shadow-soft: 0 8px 40px -20px rgba(120, 78, 50, 0.35);
+  --maxw: 1140px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* — reset — */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  color: var(--espresso);
+  background-color: var(--cream);
+  min-height: 100svh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Warm gradient wash on its own fixed compositor layer. Kept viewport-anchored
+   like background-attachment:fixed, but composited so it never repaints on
+   scroll (the fixed-attachment version caused scroll jank). */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transform: translateZ(0);
+  background-image:
+    radial-gradient(65% 55% at 82% -5%, rgba(238, 201, 148, 0.62) 0%, transparent 60%),
+    radial-gradient(55% 55% at 2% 8%, rgba(226, 158, 110, 0.16) 0%, transparent 55%),
+    radial-gradient(60% 60% at 96% 96%, rgba(214, 170, 116, 0.18) 0%, transparent 62%);
+}
+
+/* subtle film grain over everything (no blend-mode: a blended fixed overlay
+   forces a full-screen re-composite every scroll frame) */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.06;
+  transform: translateZ(0);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* — typography — */
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  /* Cormorant Garamond is airy/light — headings need a heavier weight */
+  font-weight: 600;
+  font-optical-sizing: auto;
+  line-height: 1.04;
+  letter-spacing: -0.005em;
+  color: var(--espresso);
+  text-wrap: balance;
+}
+h1 { font-size: var(--step-4); }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-2); }
+
+p { text-wrap: pretty; }
+
+a { color: var(--terracotta-deep); text-decoration: none; }
+
+::selection { background: var(--sand); color: var(--espresso); }
+
+:focus-visible {
+  outline: 2.5px solid var(--terracotta);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* — layout helpers — */
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+
+/* clear the floating nav so the first content isn't hidden behind it */
+#main { padding-top: clamp(4.75rem, 5vw, 5.5rem); }
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--terracotta-deep);
+}
+
+/* pill button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-sans);
+  font-weight: 560;
+  font-size: var(--step-0);
+  padding: 0.7em 1.4em;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  transition: transform 0.35s var(--ease), background-color 0.35s var(--ease),
+              border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  will-change: transform;
+}
+.btn--solid {
+  background: var(--terracotta);
+  color: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.btn--solid:hover { background: var(--terracotta-deep); transform: translateY(-2px); }
+.btn--ghost {
+  background: transparent;
+  color: var(--espresso);
+  border-color: var(--line);
+}
+.btn--ghost:hover { border-color: var(--terracotta); color: var(--terracotta-deep); transform: translateY(-2px); }
+
+/* — motion: gentle reveal on load/scroll — */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] { opacity: 1; transform: none; }
+}
