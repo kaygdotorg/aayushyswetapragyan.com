@@ -1,0 +1,164 @@
+---
+// Renders the book(s) you're currently reading, with the cover auto-fetched
+// from the Open Library API by title (+ optional author). Fetched at build time
+// (live in `astro dev`). Fails quietly so the build never breaks.
+//
+// Usage in MDX:
+//   <CurrentlyReading books={[{ title: 'Book Name', author: 'Author' }]} />
+// Pin an exact cover with `coverId` (an Open Library cover id) if the search
+// picks the wrong edition.
+interface BookInput {
+  title: string;
+  author?: string;
+  coverId?: number;
+}
+interface Props {
+  books?: BookInput[];
+}
+const { books = [] } = Astro.props;
+
+interface Book {
+  title: string;
+  author: string;
+  cover: string;
+  link: string | null;
+}
+
+async function getJSON(url: string, ms = 8000): Promise<any | null> {
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'aayushyswetapragyan.com (+currently reading)' },
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    return res.ok ? await res.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+async function fromOpenLibrary(book: BookInput): Promise<Book | null> {
+  const params = new URLSearchParams({ title: book.title, limit: '5', fields: 'title,author_name,cover_i,key' });
+  if (book.author) params.set('author', book.author);
+  const data = await getJSON(`https://openlibrary.org/search.json?${params}`);
+  const docs = data?.docs ?? [];
+  const doc = docs.find((d: any) => d.cover_i);
+  if (!doc) return null;
+  return {
+    title: book.title,
+    author: book.author ?? (doc.author_name?.[0] ?? ''),
+    cover: `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`,
+    link: doc.key ? `https://openlibrary.org${doc.key}` : null,
+  };
+}
+
+async function fromGoogleBooks(book: BookInput): Promise<Book | null> {
+  const q = `intitle:${book.title}` + (book.author ? `+inauthor:${book.author}` : '');
+  const data = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=5&country=US`);
+  const item = (data?.items ?? []).find((i: any) => i.volumeInfo?.imageLinks?.thumbnail);
+  if (!item) return null;
+  const info = item.volumeInfo;
+  return {
+    title: book.title,
+    author: book.author ?? (info.authors?.[0] ?? ''),
+    cover: info.imageLinks.thumbnail.replace(/^http:/, 'https:'),
+    link: info.canonicalVolumeLink ?? info.infoLink ?? null,
+  };
+}
+
+async function resolve(book: BookInput): Promise<Book> {
+  const base: Book = { title: book.title, author: book.author ?? '', cover: '', link: null };
+  // A pinned cover id is fully deterministic — no network needed.
+  if (book.coverId) {
+    return { ...base, cover: `https://covers.openlibrary.org/b/id/${book.coverId}-L.jpg` };
+  }
+  // Try Open Library (twice, for transient build-time failures), then Google Books.
+  return (
+    (await fromOpenLibrary(book)) ??
+    (await fromOpenLibrary(book)) ??
+    (await fromGoogleBooks(book)) ??
+    base
+  );
+}
+
+const resolved = (await Promise.all(books.map(resolve))).filter((b) => b.cover);
+---
+
+{
+  resolved.length > 0 && (
+    <div class="books" role="list" aria-label="Currently reading">
+      {resolved.map((b) => {
+        const inner = (
+          <>
+            <img class="book__cover" src={b.cover} alt={`Cover of ${b.title}`} loading="lazy" width="120" height="180" />
+            <span class="book__meta">
+              <span class="book__title">{b.title}</span>
+              {b.author && <span class="book__sub">{b.author}</span>}
+            </span>
+          </>
+        );
+        return (
+          <div class="book" role="listitem">
+            {b.link ? (
+              <a href={b.link} rel="noopener" aria-label={`${b.title} on Open Library`}>
+                {inner}
+              </a>
+            ) : (
+              <div class="book__static">{inner}</div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  )
+}
+
+<style>
+  .books {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.1rem 1.25rem;
+    margin-top: 1.25rem;
+  }
+  .book { width: 124px; }
+  .book a,
+  .book__static {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--espresso);
+  }
+  .book__cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 10px;
+    background: var(--cream-deep);
+    box-shadow: var(--shadow);
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  }
+  .book a:hover .book__cover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+  }
+  .book__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    line-height: 1.25;
+  }
+  .book__title {
+    font-family: var(--font-serif);
+    font-size: 0.98rem;
+    font-weight: 600;
+  }
+  .book__sub {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--espresso-soft);
+  }
+</style>

@@ -1,0 +1,137 @@
+---
+// Pulls recently-watched films from a Letterboxd RSS feed and renders a small
+// poster grid. Fetched at build time (and live in `astro dev`). Fails quietly:
+// if the feed is unreachable, nothing renders so the build never breaks.
+interface Props {
+  username?: string;
+  limit?: number;
+}
+const { username = 'aayushyyy', limit = 6 } = Astro.props;
+
+interface Film {
+  title: string;
+  year: string;
+  rating: number | null;
+  liked: boolean;
+  link: string;
+  poster: string;
+}
+
+let films: Film[] = [];
+
+const pick = (block: string, tag: string): string => {
+  const m = block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
+  if (!m) return '';
+  return m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim();
+};
+
+try {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 6000);
+  const res = await fetch(`https://letterboxd.com/${username}/rss/`, {
+    headers: { 'User-Agent': 'aayushyswetapragyan.com (+letterboxd recent films)' },
+    signal: ctrl.signal,
+  });
+  clearTimeout(timer);
+
+  if (res.ok) {
+    const xml = await res.text();
+    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1]);
+    films = items
+      .map((b): Film => {
+        const ratingRaw = pick(b, 'letterboxd:memberRating');
+        const desc = pick(b, 'description');
+        const poster = (desc.match(/<img[^>]+src="([^"]+)"/) || [])[1] || '';
+        return {
+          title: pick(b, 'letterboxd:filmTitle'),
+          year: pick(b, 'letterboxd:filmYear'),
+          rating: ratingRaw ? parseFloat(ratingRaw) : null,
+          liked: pick(b, 'letterboxd:memberLike') === 'true',
+          link: pick(b, 'link'),
+          poster,
+        };
+      })
+      .filter((f) => f.title && f.poster)
+      .slice(0, limit);
+  }
+} catch {
+  // feed unavailable — render nothing
+}
+
+const stars = (r: number | null): string => {
+  if (r == null) return '';
+  return '★'.repeat(Math.floor(r)) + (r - Math.floor(r) >= 0.5 ? '½' : '');
+};
+---
+
+{
+  films.length > 0 && (
+    <div class="films" role="list" aria-label="Recently watched films">
+      {films.map((f) => (
+        <div class="film" role="listitem">
+          <a href={f.link} rel="noopener" aria-label={`${f.title} (${f.year}) on Letterboxd`}>
+            <img class="film__poster" src={f.poster} alt={`Poster for ${f.title}`} loading="lazy" width="120" height="180" />
+            <span class="film__meta">
+              <span class="film__title">{f.title}</span>
+              <span class="film__sub">
+                {f.year}
+                {f.rating != null && <span class="film__stars"> · {stars(f.rating)}</span>}
+                {f.liked && <span class="film__heart" aria-label="liked"> ♥</span>}
+              </span>
+            </span>
+          </a>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .films {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 1.1rem 0.9rem;
+  }
+  .film a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--espresso);
+  }
+  .film__poster {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 12px;
+    background: var(--cream-deep);
+    box-shadow: var(--shadow);
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  }
+  .film a:hover .film__poster {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+  }
+  .film__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    line-height: 1.25;
+  }
+  .film__title {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .film__sub {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--espresso-soft);
+  }
+  .film__stars { color: var(--terracotta-deep); }
+  .film__heart { color: var(--terracotta); }
+</style>
