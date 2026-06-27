@@ -12,6 +12,8 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [mdx(), react(), keystatic()],
+  // The cms subdomain only exists to serve the admin; send the root there.
+  redirects: { '/': '/keystatic' },
   server: {
     host: true,
     port: 4322,
