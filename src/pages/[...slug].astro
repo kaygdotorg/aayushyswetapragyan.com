@@ -1,0 +1,21 @@
+---
+import { getCollection, render } from 'astro:content';
+import Page from '../layouts/Page.astro';
+
+// Freeform pages created in the CMS. Static routes (index, now, uses, writing)
+// take priority; this only handles slugs that match a page entry.
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((page) => ({
+    params: { slug: page.id.replace(/\/index$/, '') },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+
+<Page title={page.data.title} description={page.data.description} intro={page.data.description}>
+  <Content />
+</Page>

@@ -1,8 +1,17 @@
 ---
+import { getCollection } from 'astro:content';
+
+// Freeform pages the editor flagged "Show in top nav".
+const navPages = (await getCollection('pages'))
+  .filter((p) => p.data.showInNav)
+  .map((p) => ({ href: `/${p.id.replace(/\/index$/, '')}`, label: p.data.title }));
+
 const links = [
   { href: '/', label: 'Home' },
   { href: '/now', label: 'Now' },
   { href: '/uses', label: 'Uses' },
+  { href: '/writing', label: 'Writing' },
+  ...navPages,
 ];
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---

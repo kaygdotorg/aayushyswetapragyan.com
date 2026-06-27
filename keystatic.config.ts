@@ -1,11 +1,40 @@
-import { config, fields, singleton } from '@keystatic/core';
+import { config, fields, singleton, collection } from '@keystatic/core';
 
-// Local-mode CMS: edits the JSON data files in this repo. Served (gated by
-// Authentik, NetBird-only) on o2; a timer commits + pushes -> Cloudflare Pages.
+// Local-mode CMS: edits content files in this repo. Served (gated by Authentik,
+// NetBird-only) on o2; a timer commits + pushes -> Cloudflare Pages.
 export default config({
   storage: { kind: 'local' },
   ui: {
     brand: { name: "Aayushy's site" },
+  },
+  collections: {
+    writing: collection({
+      label: 'Writing (blog)',
+      slugField: 'title',
+      path: 'src/content/writing/*',
+      format: { contentField: 'content' },
+      columns: ['title', 'date'],
+      schema: {
+        title: fields.slug({ name: { label: 'Title' } }),
+        date: fields.date({ label: 'Date', defaultValue: { kind: 'today' } }),
+        draft: fields.checkbox({ label: 'Draft (hide from site)', defaultValue: false }),
+        description: fields.text({ label: 'Short description', multiline: true }),
+        content: fields.mdx({ label: 'Body' }),
+      },
+    }),
+    pages: collection({
+      label: 'Pages',
+      slugField: 'title',
+      path: 'src/content/pages/*',
+      format: { contentField: 'content' },
+      columns: ['title'],
+      schema: {
+        title: fields.slug({ name: { label: 'Title' } }),
+        description: fields.text({ label: 'Short description', multiline: true }),
+        showInNav: fields.checkbox({ label: 'Show in top nav', defaultValue: false }),
+        content: fields.mdx({ label: 'Body' }),
+      },
+    }),
   },
   singletons: {
     site: singleton({
