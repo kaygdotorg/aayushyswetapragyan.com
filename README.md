@@ -37,9 +37,10 @@ The bound IP/port live in the `server` block of `astro.config.mjs`.
 | --- | --- |
 | Name, roles, email, social links | `src/data/site.ts` |
 | Landing page copy & sections | `src/pages/index.astro` |
-| `/now` page | `src/pages/now.md` (plain Markdown) |
-| `/uses` page | `src/pages/uses.md` (plain Markdown) |
+| `/now` page | `src/pages/now.mdx` (Markdown + components) |
+| `/uses` page | `src/pages/uses.mdx` (Markdown + components) |
 | Colors, fonts, spacing | `src/styles/global.css` (`:root` tokens) |
+| Analytics | `src/data/site.ts` (`analytics` block) |
 
 ### Swap the hero photograph
 
@@ -58,6 +59,31 @@ set the real `email`. Empty `href` values are hidden automatically.
 platforms, export a 1200×630 **PNG** (some platforms don't render SVG previews),
 save it as `public/og-image.png`, and update the reference in
 `src/layouts/Base.astro`.
+
+## Analytics (Umami)
+
+Privacy-friendly, cookie-free analytics via the self-hosted Umami at
+`umami.kayg.org`. Configured in the `analytics` block of `src/data/site.ts`:
+
+1. In Umami, add a website for `aayushyswetapragyan.com` and copy its **Website ID**.
+2. Paste it into `analytics.websiteId`.
+
+The tracker only loads when `websiteId` is set (off until then). The script tag
+itself lives in `src/layouts/Base.astro`.
+
+### First-party requests (optional)
+
+By default the tracker loads from `umami.kayg.org` (third-party), which some
+ad-blockers drop. To keep all analytics requests on this domain:
+
+1. Proxy a path on this domain to the Umami instance (e.g. a Cloudflare Worker or
+   Pages Function routing `/_a/*` to `https://umami.kayg.org/*`).
+2. Set `analytics.src` to the proxied script URL (e.g. `/_a/script.js`) and
+   `analytics.hostUrl` to the proxied API base.
+
+One Umami instance already serves many sites (each keyed by its Website ID), so
+no per-domain change is needed on Umami itself; first-party is purely a proxy in
+front of it.
 
 ## Deploy — Cloudflare Pages
 

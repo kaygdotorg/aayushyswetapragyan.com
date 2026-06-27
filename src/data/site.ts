@@ -19,3 +19,17 @@ export const socials = [
   { label: 'LinkedIn', icon: 'linkedin', href: 'https://www.linkedin.com/in/aayushyyy' },
   { label: 'Email', icon: 'email', href: `mailto:${site.email}` },
 ];
+
+// Umami analytics (self-hosted at umami.kayg.org). Privacy-friendly, cookie-free.
+// Leave `websiteId` empty to disable tracking entirely.
+export const analytics = {
+  // Where the tracker script is loaded from. Point this at a first-party proxy
+  // path on this domain later if you want first-party requests (see README).
+  src: 'https://umami.kayg.org/script.js',
+  // TODO: in Umami, add a website for aayushyswetapragyan.com and paste its ID.
+  websiteId: '',
+  // Optional: override where events are sent (Umami `data-host-url`). Leave
+  // empty to use the script's own host. Set to a first-party endpoint to keep
+  // analytics requests on this domain.
+  hostUrl: '',
+};
