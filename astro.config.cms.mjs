@@ -9,6 +9,8 @@ import keystatic from '@keystatic/astro';
 import node from '@astrojs/node';
 
 export default defineConfig({
+  // Same as the public site, so Base.astro's canonical/OG URLs resolve.
+  site: 'https://aayushyswetapragyan.com',
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [mdx(), react(), keystatic()],

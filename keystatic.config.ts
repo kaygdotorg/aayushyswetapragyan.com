@@ -83,7 +83,12 @@ export default config({
         aboutBody: fields.text({ label: 'About body', multiline: true }),
         contactTitle: fields.text({ label: 'Contact title' }),
         contactLeadIn: fields.text({ label: 'Contact text (before resume pill)' }),
-        resumeUrl: fields.text({ label: 'Resume URL' }),
+        resume: fields.file({
+          label: 'Résumé (PDF)',
+          description: 'Upload a PDF to replace the resume the "resume" pill links to.',
+          directory: 'public/files',
+          publicPath: '/files/',
+        }),
         contactAfter: fields.text({ label: 'Contact text (after resume pill)' }),
       },
     }),
