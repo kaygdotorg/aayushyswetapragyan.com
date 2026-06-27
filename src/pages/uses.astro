@@ -1,0 +1,37 @@
+---
+import Page from '../layouts/Page.astro';
+import UsesGallery from '../components/UsesGallery.astro';
+import uses from '../data/uses.json';
+---
+
+<Page
+  title="Uses"
+  description="The gear, apps, and everyday things Aayushy Swetapragyan uses and loves."
+  intro={uses.intro}
+  updated={uses.updated}
+>
+  <blockquote><p>{uses.note}</p></blockquote>
+
+  <UsesGallery />
+
+  {
+    uses.categories.map((cat) => (
+      <Fragment>
+        <h2>{cat.title}</h2>
+        <ul>
+          {cat.items.map((it) => (
+            <li>
+              {it.emoji}{' '}
+              <strong>{it.url ? <a href={it.url}>{it.name}</a> : it.name}</strong>
+              {it.note ? `, ${it.note}` : ''}
+            </li>
+          ))}
+        </ul>
+      </Fragment>
+    ))
+  }
+
+  <hr />
+
+  <p><em>Inspired by the <a href="https://uses.tech/">/uses page</a> community.</em></p>
+</Page>

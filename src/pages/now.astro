@@ -1,0 +1,38 @@
+---
+import Page from '../layouts/Page.astro';
+import RecentFilms from '../components/RecentFilms.astro';
+import CurrentlyReading from '../components/CurrentlyReading.astro';
+import now from '../data/now.json';
+---
+
+<Page
+  title="Now"
+  description="What Aayushy Swetapragyan is focused on right now."
+  intro={now.intro}
+  updated={now.updated}
+>
+  <blockquote><p>{now.note}</p></blockquote>
+
+  <h2>Lately</h2>
+  <ul>{now.lately.map((item) => <li>{item}</li>)}</ul>
+
+  <h2>Reading</h2>
+  <CurrentlyReading books={now.reading} />
+
+  <h2>Watching</h2>
+  <p>
+    A peek at what I&rsquo;ve seen recently, straight from
+    <a href="https://letterboxd.com/aayushyyy/">Letterboxd</a>.
+  </p>
+  <RecentFilms username="aayushyyy" limit={6} />
+
+  <h2>Making</h2>
+  <ul>{now.making.map((item) => <li>{item}</li>)}</ul>
+
+  <h2>Loving</h2>
+  <ul>{now.loving.map((item) => <li>{item}</li>)}</ul>
+
+  <hr />
+
+  <p><em>Inspired by Derek Sivers&rsquo; <a href="https://nownownow.com/">/now page movement</a>.</em></p>
+</Page>

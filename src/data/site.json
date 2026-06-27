@@ -1,0 +1,12 @@
+{
+  "name": "Aayushy Swetapragyan",
+  "title": "Aayushy Swetapragyan's Petit Espace",
+  "email": "mail@aayushyswetapragyan.com",
+  "roles": ["psychologist", "photographer", "operations"],
+  "socials": [
+    { "label": "Instagram", "icon": "instagram", "href": "https://www.instagram.com/aayushywhyshe/" },
+    { "label": "X", "icon": "x", "href": "https://x.com/aayushywhyshe" },
+    { "label": "LinkedIn", "icon": "linkedin", "href": "https://www.linkedin.com/in/aayushyyy" },
+    { "label": "Email", "icon": "email", "href": "mailto:mail@aayushyswetapragyan.com" }
+  ]
+}

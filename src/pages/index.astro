@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import { site } from '../data/site';
+import home from '../data/home.json';
 import portrait from '../assets/aayushy.jpg';
 ---
 
@@ -9,10 +10,10 @@ import portrait from '../assets/aayushy.jpg';
   <!-- ===================== HERO ===================== -->
   <section class="hero wrap">
     <div class="hero__text">
-      <p class="eyebrow" data-reveal>my small, warm corner of the internet</p>
+      <p class="eyebrow" data-reveal>{home.eyebrow}</p>
 
       <h1 class="hero__name" data-reveal style="--reveal-delay: 80ms">
-        Hi, I&rsquo;m <span class="hero__given">Aayushy Swetapragyan</span><span class="hero__dot">.</span>
+        Hi, I&rsquo;m <span class="hero__given">{home.heroGiven}</span><span class="hero__dot">.</span>
       </h1>
 
       <ul class="hero__roles" data-reveal style="--reveal-delay: 160ms" aria-label="What I do">
@@ -20,9 +21,7 @@ import portrait from '../assets/aayushy.jpg';
       </ul>
 
       <p class="hero__lede" data-reveal style="--reveal-delay: 240ms">
-        Psychologist by training, photographer by heart, and an operations
-        specialist by day. This is where I keep my photographs, my thoughts,
-        and the little things I&rsquo;m loving lately.
+        {home.heroLede}
       </p>
 
       <div class="hero__cta" data-reveal style="--reveal-delay: 320ms">
@@ -53,14 +52,12 @@ import portrait from '../assets/aayushy.jpg';
 
   <!-- ===================== ABOUT ===================== -->
   <section class="band wrap" aria-labelledby="about-title">
-    <p class="eyebrow" data-reveal>a little about me</p>
+    <p class="eyebrow" data-reveal>{home.aboutEyebrow}</p>
     <h2 id="about-title" class="band__title" data-reveal style="--reveal-delay: 80ms">
-      Loud, inappropriate, on the hunt for conversations and portraits
+      {home.aboutTitle}
     </h2>
     <p class="band__body" data-reveal style="--reveal-delay: 160ms">
-      I spend my days untangling how people work and helping them run a little
-      smoother. Off the clock, you&rsquo;ll usually find me chasing people I love 
-      with my camera, getting lost in a good book, or thinking about what would make me more money.
+      {home.aboutBody}
     </p>
   </section>
 
@@ -83,10 +80,9 @@ import portrait from '../assets/aayushy.jpg';
   <!-- ===================== CONTACT ===================== -->
   <section class="contact wrap" aria-labelledby="contact-title">
     <div class="contact__inner" data-reveal>
-      <h2 id="contact-title" class="contact__title">Say hello</h2>
+      <h2 id="contact-title" class="contact__title">{home.contactTitle}</h2>
       <p class="contact__body">
-        Looking to hire? Here&rsquo;s my <a class="pill-link" href="/resume.pdf" target="_blank" rel="noopener">resume</a>.
-        My inbox is always open.
+        {home.contactLeadIn} <a class="pill-link" href={home.resumeUrl} target="_blank" rel="noopener">resume</a>{home.contactAfter}
       </p>
       <a class="btn btn--solid" href={`mailto:${site.email}`}>{site.email}</a>
     </div>
