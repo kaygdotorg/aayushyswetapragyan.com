@@ -10,12 +10,17 @@
 interface BookInput {
   title: string;
   author?: string;
-  coverId?: number;
+  coverId?: number | string;
 }
 interface Props {
+  // Either pass an array of books, or single-book props (used by the CMS block).
   books?: BookInput[];
+  title?: string;
+  author?: string;
+  coverId?: number | string;
 }
-const { books = [] } = Astro.props;
+const { books: booksProp, title, author, coverId } = Astro.props;
+const books: BookInput[] = booksProp ?? (title ? [{ title, author, coverId }] : []);
 
 interface Book {
   title: string;

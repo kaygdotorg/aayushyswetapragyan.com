@@ -22,4 +22,21 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { writing, pages };
+// Now and Uses: single rich-text entries (src/content/<name>/index.mdx).
+const now = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/now' }),
+  schema: z.object({
+    intro: z.string(),
+    updated: z.string(),
+  }),
+});
+
+const uses = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/uses' }),
+  schema: z.object({
+    intro: z.string(),
+    updated: z.string(),
+  }),
+});
+
+export const collections = { writing, pages, now, uses };

@@ -1,35 +1,19 @@
 ---
+import { getEntry, render } from 'astro:content';
 import Page from '../layouts/Page.astro';
 import UsesGallery from '../components/UsesGallery.astro';
-import uses from '../data/uses.json';
+
+const entry = await getEntry('uses', 'index');
+const { Content } = await render(entry!);
 ---
 
 <Page
   title="Uses"
   description="The gear, apps, and everyday things Aayushy Swetapragyan uses and loves."
-  intro={uses.intro}
-  updated={uses.updated}
+  intro={entry!.data.intro}
+  updated={entry!.data.updated}
 >
-  <blockquote><p>{uses.note}</p></blockquote>
-
-  <UsesGallery />
-
-  {
-    uses.categories.map((cat) => (
-      <Fragment>
-        <h2>{cat.title}</h2>
-        <ul>
-          {cat.items.map((it) => (
-            <li>
-              {it.emoji}{' '}
-              <strong>{it.url ? <a href={it.url}>{it.name}</a> : it.name}</strong>
-              {it.note ? `, ${it.note}` : ''}
-            </li>
-          ))}
-        </ul>
-      </Fragment>
-    ))
-  }
+  <Content components={{ Gallery: UsesGallery }} />
 
   <hr />
 
