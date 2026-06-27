@@ -12,7 +12,7 @@ export default config({
     writing: collection({
       label: 'Writing (blog)',
       slugField: 'title',
-      path: 'src/content/writing/*',
+      path: 'src/content/writing/*/',
       format: { contentField: 'content' },
       columns: ['title', 'date'],
       schema: {
@@ -26,7 +26,7 @@ export default config({
     pages: collection({
       label: 'Pages',
       slugField: 'title',
-      path: 'src/content/pages/*',
+      path: 'src/content/pages/*/',
       format: { contentField: 'content' },
       columns: ['title'],
       schema: {
@@ -95,7 +95,7 @@ export default config({
 
     now: singleton({
       label: 'Now page',
-      path: 'src/content/now',
+      path: 'src/content/now/',
       format: { contentField: 'content' },
       schema: {
         intro: fields.text({ label: 'Intro (page header)', multiline: true }),
@@ -129,7 +129,7 @@ export default config({
 
     uses: singleton({
       label: 'Uses page',
-      path: 'src/content/uses',
+      path: 'src/content/uses/',
       format: { contentField: 'content' },
       schema: {
         intro: fields.text({ label: 'Intro (page header)', multiline: true }),
