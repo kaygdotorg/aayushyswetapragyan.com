@@ -11,10 +11,13 @@ export default defineConfig({
   // The always-on NetBird preview runs `astro dev`; hide the dev toolbar so it
   // looks clean when viewed over the VPN.
   devToolbar: { enabled: false },
-  // Dev server bind is configured via env vars (see the systemd unit) so no
-  // private host/IP is hard-coded in the repo. Defaults are local-only.
+  // Dev server: bind all interfaces so it's reachable over NetBird. We bind
+  // `true` rather than a single IP because Astro 7's dev CLI crashes when bound
+  // to one non-loopback IP (Vite leaves resolvedUrls.local empty). Reachability
+  // is still controlled at the network layer (OCI security list / NetBird);
+  // allowedHosts gates which Host headers are accepted.
   server: {
-    host: process.env.DEV_HOST ?? 'localhost',
+    host: true,
     port: Number(process.env.DEV_PORT ?? 4321),
     allowedHosts: (process.env.DEV_ALLOWED_HOSTS ?? '')
       .split(',')
