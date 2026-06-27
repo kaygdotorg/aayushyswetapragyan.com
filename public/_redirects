@@ -1,0 +1,3 @@
+# Old /writing route renamed to /blog (SEO-friendly). Preserve any inbound links.
+/writing      /blog          301
+/writing/*    /blog/:splat   301

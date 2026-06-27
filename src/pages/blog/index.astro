@@ -25,7 +25,7 @@ const fmt = (d: Date) =>
         <ul class="writing__list">
           {posts.map((post) => (
             <li class="writing__item" data-reveal>
-              <a href={`/writing/${post.id.replace(/\/index$/, '')}`}>
+              <a href={`/blog/${post.id.replace(/\/index$/, '')}`}>
                 <time class="writing__date">{fmt(post.data.date)}</time>
                 <h2 class="writing__post-title">{post.data.title}</h2>
                 {post.data.description && <p class="writing__desc">{post.data.description}</p>}
