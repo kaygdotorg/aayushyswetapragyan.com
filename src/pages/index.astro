@@ -1,9 +1,13 @@
 ---
+export const prerender = true;
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import { site } from '../data/site';
 import home from '../data/home.json';
 import portrait from '../assets/aayushy.jpg';
+
+// Keystatic stores the resume filename; build its public URL (robust to either form).
+const resumeHref = home.resume?.startsWith('/') ? home.resume : `/files/${home.resume}`;
 ---
 
 <Base>
@@ -82,7 +86,7 @@ import portrait from '../assets/aayushy.jpg';
     <div class="contact__inner" data-reveal>
       <h2 id="contact-title" class="contact__title">{home.contactTitle}</h2>
       <p class="contact__body">
-        {home.contactLeadIn} <a class="pill-link" href={home.resumeUrl} target="_blank" rel="noopener">resume</a>{home.contactAfter}
+        {home.contactLeadIn} <a class="pill-link" href={resumeHref} target="_blank" rel="noopener">resume</a>{home.contactAfter}
       </p>
       <a class="btn btn--solid" href={`mailto:${site.email}`}>{site.email}</a>
     </div>
