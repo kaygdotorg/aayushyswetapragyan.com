@@ -12,5 +12,11 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [mdx(), react(), keystatic()],
-  server: { host: true, port: 4322 },
+  server: {
+    host: true,
+    port: 4322,
+    // Served behind Traefik (NetBird-only + Authentik); allow the proxied host.
+    allowedHosts: ['cms.aayushyswetapragyan.com'],
+  },
 });
+
